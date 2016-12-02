@@ -343,7 +343,7 @@ class aliyun_instance():
                     if self.__stopInstance(instanceId):
                         print 'stop instance %s failed' % instanceId
                         continue
-                    time.sleep(20)
+                    
                 else:
                     print 'instance %s is not at running' % instanceId
 
