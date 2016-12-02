@@ -327,7 +327,27 @@ class aliyun_instance():
 
         print '--------------------------------finished-----------------------------'
 
+    def stopInstances(self):
+        instance_list = self.__getInstanceList()
+        if instance_list is None:
+            print 'failed with getInstanceList'
+            return 2
 
+        self.__showAllInstances(instance_list)
+        print '--------------now start stop all instances above---------------'
+        if instance_list.has_key(u'Instances') and instance_list[u'Instances'].has_key(u'Instance'):
+            for instance in instance_list[u'Instances'][u'Instance']:
+                instanceId = instance[u'InstanceId']
+                if u'Running' == instance[u'Status']:
+                    print 'stoping instance %s ... ' % instanceId
+                    if self.__stopInstance(instanceId):
+                        print 'stop instance %s failed' % instanceId
+                        continue
+                    
+                else:
+                    print 'instance %s is not at running' % instanceId
+
+        print '--------------------------------finished-----------------------------'
 
 
 
@@ -339,6 +359,8 @@ def print_tips():
     print 'create'
     print 'delete'
     print 'stop'
+    print 'allstop'
+    print 'clean'
 
 if __name__ == "__main__":
     instance = aliyun_instance()
@@ -350,22 +372,41 @@ if __name__ == "__main__":
         if 'show' == cmd.lower():
             instance.showInstances()
         elif 'create' == cmd.lower():
-            print 'are you sure to create new one instance?'
+            print '----------------------------------------------------------------'
+            print 'are you sure to create new one instance?[yes|no]'
             input = raw_input()
             if input == 'yes':
                 instance.createAndStartInstance()
         elif 'delete' == cmd.lower():
             instance.showInstances()
+            print '----------------------------------------------------------------'
             print 'input the instance id'
             input = raw_input()
 
             instance.deleteInstance(input)
         elif 'stop' == cmd.lower():
             instance.showInstances()
+            print '----------------------------------------------------------------'
             print 'input the instance id'
             input = raw_input()
 
             instance.stopInstance(input)
+        elif 'allstop' == cmd.lower():
+            instance.showInstances()
+            print '----------------------------------------------------------------'
+            print ' are you sure to delete all instances?[yes|no]'
+            input = raw_input()
+            if input == 'yes':
+                instance.stopInstances()
+        elif 'clean' == cmd.lower():
+            instance.showInstances()
+            print '----------------------------------------------------------------'
+            print ' are you sure to delete all instances?[yes|no]'
+            input = raw_input()
+            if input == 'yes':
+                instance.cleanInstances()
+
+
         else:
             print_tips()
 
